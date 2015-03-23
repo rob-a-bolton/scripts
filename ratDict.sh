@@ -6,7 +6,7 @@ resCode=$?
 
 case $resCode in
     0)
-        xmessage "$resText"
+        xmessage "$resText" || true
         ;;
     20)
         ratpoison -c "echo No matches found for $words"
