@@ -1,7 +1,7 @@
 #!/bin/sh
 
 words=$*
-resText=$(dict $words)
+resText=$(dict "$words")
 resCode=$?
 
 case $resCode in
