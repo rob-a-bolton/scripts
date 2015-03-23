@@ -1,5 +1,6 @@
 #!/bin/sh
 
+[ -z $* ] && exit
 words=$*
 resText=$(dict "$words")
 resCode=$?
