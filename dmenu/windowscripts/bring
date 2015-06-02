@@ -1,0 +1,3 @@
+#!/bin/bash
+[[ -z $DMENU_windownumber ]] && exit
+wmctrl -i -R "$DMENU_windownumber" && wmctrl -b remove,shaded,hidden -i -r $DMENU_windownumber

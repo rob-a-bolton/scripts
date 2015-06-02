@@ -1,0 +1,3 @@
+#!/bin/bash
+[[ -z $DMENU_windownumber ]] && exit
+wmctrl -i -c "$DMENU_windownumber"

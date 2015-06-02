@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cat | base64 -d | xxd -p | tr -d '\n'
