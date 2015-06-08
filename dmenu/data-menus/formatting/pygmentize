@@ -1,0 +1,11 @@
+#!/bin/sh
+
+lang=$( pygmentize -L | grep '^[*]' | sed 's/^[*] //;s/,[ \t]/\r/g;s/:$//' | dmenu -p "Language: " )
+formatter=$( dmenu -p "Formatter: " <<< "\
+html
+terminal" )
+
+extraArgs=""
+[ $formatter == "html" ] && extraArgs='-O full'
+
+cat | pygmentize -l $lang -f $formatter $extraArgs
