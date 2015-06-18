@@ -18,16 +18,26 @@ stations = {
     'Minimal':          'http://psytube.at:14120/;stream.ogg',
 }
 
-dmenuProcess = subprocess.Popen(["dmenu", "-i", "-p", "Station:", "-l", str(len(stations.keys()))], stdin=PIPE, stdout=PIPE)
-dmenuProcess.stdin.write(bytes("\n".join(list(stations)), 'UTF-8'))
+pauseStr =  "===[ Pause ]==="
+playStr =   "===[ Play ]===="
+dmenuItemList = list(stations)
+dmenuItemList.append(pauseStr)
+dmenuItemList.append(playStr) 
+
+dmenuInputText = "\n".join(dmenuItemList)
+dmenuProcess = subprocess.Popen(["dmenu", "-i", "-p", "Station:", "-l", str(len(dmenuItemList))], stdin=PIPE, stdout=PIPE)
+dmenuProcess.stdin.write(bytes(dmenuInputText, 'UTF-8'))
 dmenuProcess.stdin.close()
 station = dmenuProcess.stdout.readline().decode("utf-8").rstrip()
 dmenuProcess.stdout.close()
 
-print(station, ": ", stations[station])
 if station in stations:
     subprocess.call(["mpc", "--wait", "clear"])
     subprocess.call(["mpc", "--wait", "add", stations[station]])
     subprocess.call(["mpc", "--wait", "play"])
+elif station == pauseStr:
+    subprocess.call(["mpc", "pause"])
+elif station == playStr:
+    subprocess.call(["mpc", "play"])
 else:
     exit(1)
