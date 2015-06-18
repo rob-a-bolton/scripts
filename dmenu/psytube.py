@@ -1,5 +1,6 @@
 #!/bin/python
 
+import os
 import subprocess
 from subprocess import PIPE
 
@@ -18,16 +19,27 @@ stations = {
     'Minimal':          'http://psytube.at:14120/;stream.ogg',
 }
 
-pauseStr =  "===[ Pause ]==="
 playStr =   "===[ Play ]===="
+pauseStr =  "===[ Pause ]==="
+
 dmenuItemList = list(stations)
-dmenuItemList.append(pauseStr)
 dmenuItemList.append(playStr) 
+dmenuItemList.append(pauseStr)
 
 dmenuInputText = "\n".join(dmenuItemList)
-dmenuProcess = subprocess.Popen(["dmenu", "-i", "-p", "Station:", "-l", str(len(dmenuItemList))], stdin=PIPE, stdout=PIPE)
+
+dmenuCmdList = ["dmenu", "-i", "-p", "Station:", "-l", str(len(dmenuItemList))] 
+
+dmenuEnvArg = os.environ.get('DMENU_ARGS')
+if(dmenuEnvArg != None):
+    dmenuEnvArgList = dmenuEnvArg.split(' ')
+    dmenuCmdList += dmenuEnvArgList
+
+dmenuProcess = subprocess.Popen(dmenuCmdList, stdin=PIPE, stdout=PIPE)
+
 dmenuProcess.stdin.write(bytes(dmenuInputText, 'UTF-8'))
 dmenuProcess.stdin.close()
+
 station = dmenuProcess.stdout.readline().decode("utf-8").rstrip()
 dmenuProcess.stdout.close()
 
