@@ -19,6 +19,18 @@ stations = {
     'Minimal':          'http://psytube.at:14120/;stream.ogg',
 }
 
+dmenuPrompt = "Station: "
+
+mpcProcess = subprocess.Popen(["mpc", "status", "-f", "%file%"], stdout=PIPE)
+currentStation = mpcProcess.stdout.readline().decode("utf-8").strip()
+mpcProcess.stdout.close()
+
+for stationName, streamUrl in stations.items():
+    if streamUrl == currentStation:
+        dmenuPrompt += "[%s]" % stationName
+        break
+
+
 playStr =   "===[ Play ]===="
 pauseStr =  "===[ Pause ]==="
 
@@ -28,7 +40,7 @@ dmenuItemList.append(pauseStr)
 
 dmenuInputText = "\n".join(dmenuItemList)
 
-dmenuCmdList = ["dmenu", "-i", "-p", "Station:", "-l", str(len(dmenuItemList))] 
+dmenuCmdList = ["dmenu", "-i", "-p", dmenuPrompt, "-l", str(len(dmenuItemList))] 
 
 dmenuEnvArg = os.environ.get('DMENU_ARGS')
 if(dmenuEnvArg != None):
