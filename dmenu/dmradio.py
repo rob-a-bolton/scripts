@@ -1,23 +1,41 @@
 #!/usr/bin/python3
 
+import sys
 import os
 import subprocess
 from subprocess import PIPE
+import json
+import argparse
 
-stations = {
-    'OroChill':         'http://psytube.at:10120/;stream.ogg',
-    'Progressive':      'http://psytube.at:12120/;stream.ogg',
-    'Dark Progressive': 'http://psytube.at:17120/;stream.ogg',
-    'Goa Trance':       'http://psytube.at:9120/;stream.ogg',
-    'FullOn':           'http://psytube.at:13120/;stream.ogg',
-    'Suomi-Psy':        'http://psytube.at:16120/;stream.ogg',
-    'Forest':           'http://psytube.at:15120/;stream.ogg',
-    'Dark Psy':         'http://psytube.at:8120/;stream.ogg',
-    'HiTech & Core':    'http://psytube.at:18120/;stream.ogg',
-    'Drum & Bass':      'http://psytube.at:11120/;stream.ogg',
-    'Techno':           'http://psytube.at:19120/;stream.ogg',
-    'Minimal':          'http://psytube.at:14120/;stream.ogg',
-}
+
+
+
+#######################
+##  Args & Defaults  ##
+#######################
+
+scriptDir = os.path.dirname(os.path.realpath(__file__))
+defStations = scriptDir + "/stations.json"
+
+parser = argparse.ArgumentParser(description = "Dmenu/mpd/mpc wrapper for radio streams.")
+parser.add_argument("-s", "--stations", dest="stations", action="store", default=defStations, help="json file containing stations as map")
+
+args = parser.parse_args()
+
+stationFile = args.stations
+
+if not os.path.isfile(stationFile):
+    sys.exit("Stations file %s does not exist (or is not a file)" % stationFile)
+
+with open(stationFile) as stream:
+    stations = json.load(stream)
+
+
+
+
+########################
+##  Dmenu & mpc prep  ##
+########################
 
 dmenuPrompt = "Station: "
 
@@ -46,6 +64,12 @@ dmenuEnvArg = os.environ.get('DMENU_ARGS')
 if(dmenuEnvArg != None):
     dmenuEnvArgList = dmenuEnvArg.split(' ')
     dmenuCmdList += dmenuEnvArgList
+
+
+
+######################
+##  Dmenu & mpc IO  ##
+######################
 
 dmenuProcess = subprocess.Popen(dmenuCmdList, stdin=PIPE, stdout=PIPE)
 
